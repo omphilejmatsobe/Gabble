@@ -15,16 +15,39 @@ export default function Home() {
 
   const [Inputs, setInputs] = useState(newBlog)
 
+  const moveUp = (index:number) =>
+  {
+    if (index != 0 )
+    {
+      let newArray = Inputs.slice(0, index - 1).concat([Inputs[index], Inputs[index - 1]], Inputs.slice(index + 1))
+      setInputs(newArray)
+    }
+  }
+
+  const addNewSection = () =>
+  {
+    setInputs([...Inputs, {id:1, typeOf:"Title", content:""}])
+  }
+
   return (
     <div className="flex justify-center items-center w-screen h-screen">
       <form className="flex flex-col w-full h-full justfy-center text-black gap-5">
         {
           Inputs.map((item, idx) =>
           (
-            <InputComponent getParState={Inputs} setParState={setInputs} index={idx} key={"input_" + idx} typeOfInput={item.typeOf} data={item.content} parentStates={Inputs} />
+
+            <div key={"input_" + idx} className="w-full flex flex-row items-center gap-4">
+                <InputComponent index={idx}  typeOfInput={item.typeOf} data={item.content}/>
+ 
+              <div className="">
+                <button type="button" className="" onClick={() => moveUp(idx)}>
+                  <Image width={20} height={20} src={"/icons/section-control-menu.svg"} alt="section-control-menu" className="pointer-events-none"/>
+                </button>
+              </div>
+            </div>
           ))
         }
-        <button type="submit">button</button>
+        <button type="button" onClick={addNewSection}>button</button>
       </form>
     </div>
   );
@@ -34,20 +57,10 @@ type props =
 {
     index: number
     data: string
-    parentStates: { id: number; typeOf: string; content: string; }[]
     typeOfInput: string
-    getParState: {
-    id: number;
-    typeOf: string;
-    content: string;
-}[]
-    setParState: Dispatch<SetStateAction<{
-    id: number;
-    typeOf: string;
-    content: string;
-}[]>>
+
 }
-export function InputComponent ({index, typeOfInput, data, getParState, setParState}:props)
+export function InputComponent ({index, typeOfInput, data}:props)
 {
   let input = <input></input>
 
@@ -85,24 +98,9 @@ export function InputComponent ({index, typeOfInput, data, getParState, setParSt
       </code>)
   }
 
-  const moveUp = () =>
-  {
-    if (index != 0 )
-    {
-      let newArray = getParState.slice(0, index - 1).concat([getParState[index], getParState[index - 1]], getParState.slice(index + 1))
-      setParState(newArray)
-    }
-  }
   return(
-        <div className="w-full flex flex-row items-center gap-4">
           <div className="w-full h-fit">
             {input}
           </div>
-          <div className="">
-            <button className="" onClick={moveUp}>
-              <Image width={20} height={20} src={"/icons/section-control-menu.svg"} alt="section-control-menu" className="pointer-events-none"/>
-            </button>
-          </div>
-        </div>
   )
 }
